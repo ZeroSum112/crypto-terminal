@@ -7,14 +7,28 @@
     <style>
         :root {
             --bg-color: #000000;
-            --card-bg: #111111;
-            --rh-green: #34c759; 
-            --rh-red: #ff3b30;   
+            --card-bg: #000000;
+            --rh-green: #00ff5f; 
+            --rh-red: #ff3b3f;
             --text-main: #ffffff;
-            --text-dim: #8e8e93;  
-            --btc-brand: #F7931A;
-            --eth-brand: #627EEA;
-            --alt-brand: #3a3a3c;
+            --text-dim: #8c9499;  
+            --border-color: #1e2124; 
+            --btn-text: #000;
+            --grid-line: #141618;
+            --chart-color: var(--rh-green); /* Variable for chart line */
+        }
+
+        body.light-theme {
+            --bg-color: #f4f7f9;
+            --card-bg: #ffffff;
+            --rh-green: #098551;
+            --rh-red: #cf202f;
+            --text-main: #000000; /* Changed to pure black */
+            --text-dim: #5b616e;
+            --border-color: #d1d5db; 
+            --btn-text: #ffffff;
+            --grid-line: #f4f7f9;
+            --chart-color: #007aff; /* Blue for light theme charts */
         }
 
         body {
@@ -22,9 +36,10 @@
             color: var(--text-main);
             font-family: -apple-system, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
             margin: 0;
-            padding: 16px 16px 140px 16px; 
+            padding: 16px 16px 40px 16px; 
             -webkit-font-smoothing: antialiased;
             letter-spacing: -0.2px;
+            transition: background-color 0.2s ease;
         }
 
         header {
@@ -35,82 +50,148 @@
         }
 
         .header-left { display: flex; align-items: baseline; gap: 14px; }
-        #live-clock { font-size: 20px; font-weight: 500; letter-spacing: -0.5px; min-width: 90px; }
+        
+        #live-clock { 
+            font-size: 20px; 
+            font-weight: 600; 
+            letter-spacing: -0.5px; 
+            min-width: 90px; 
+            color: var(--rh-green);
+        }
+
+        /* Set clock to black on light theme only */
+        body.light-theme #live-clock {
+            color: #000000;
+        }
+
+        .theme-toggle {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 6px 16px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+        .theme-toggle:hover { border-color: var(--rh-green); }
 
         .market-status-container { display: flex; gap: 10px; align-items: center; }
         .status-pill {
             display: flex; align-items: center; gap: 6px;
-            background: #1c1c1e; padding: 6px 10px; border-radius: 8px;
+            background: var(--card-bg); padding: 6px 12px; border-radius: 20px;
             font-size: 10px; font-weight: 600; text-transform: uppercase;
-            letter-spacing: 0.3px; color: #8e8e93;
+            letter-spacing: 0.5px; color: var(--text-dim);
+            border: 1px solid var(--border-color);
         }
         
         .pulse-dot { width: 7px; height: 7px; border-radius: 50%; }
-        .market-on { color: #fff; }
+        .market-on { color: var(--rh-green); border-color: var(--rh-green); }
         .market-on .pulse-dot { background: var(--rh-green); animation: status-pulse 2s infinite; }
-        .market-off { color: #8e8e93; }
+        .market-off { color: var(--rh-red); border-color: var(--rh-red); }
         .market-off .pulse-dot { background: var(--rh-red); }
 
         @keyframes status-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-        .card { background-color: var(--card-bg); border-radius: 24px; padding: 24px; border: 1px solid #1c1c1e; margin-bottom: 16px; max-width: 1200px; margin-left: auto; margin-right: auto; }
-        .card-header { display: flex; justify-content: space-between; align-items: center; }
-        .coin-meta { display: flex; align-items: center; gap: 12px; }
-        .logo-circle { width: 40px; height: 40px; border-radius: 50%; background: #1c1c1e; display: flex; align-items: center; justify-content: center; }
+        .card { 
+            background-color: var(--card-bg); 
+            border-radius: 32px; 
+            padding: 28px 36px; 
+            border: 1.5px solid var(--border-color); 
+            margin-bottom: 20px; 
+            max-width: 1100px; 
+            margin-left: auto; 
+            margin-right: auto;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.1s;
+        }
+        body.light-theme .card { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04); }
         
-        .price-group { display: flex; align-items: baseline; gap: 8px; }
-        .price { font-size: 28px; font-weight: 600; color: var(--rh-green); font-variant-numeric: tabular-nums; letter-spacing: -0.5px; }
-        .pct-change { font-size: 15px; font-weight: 500; }
+        .card:hover { border-color: var(--rh-green); }
+        
+        /* Change card hover to chart blue on light theme only */
+        body.light-theme .card:hover { border-color: var(--chart-color); }
+        
+        .card:active { transform: scale(0.995); }
+        
+        .remove-btn {
+            position: absolute; top: 20px; right: 20px;
+            background: none; border: none; color: var(--text-dim);
+            font-size: 20px; cursor: pointer; padding: 5px; line-height: 1;
+            z-index: 10;
+        }
+        .remove-btn:hover { color: var(--rh-red); }
+
+        .card-content {
+            height: 0; opacity: 0; visibility: hidden;
+            overflow: hidden; pointer-events: none;
+        }
+        .card.expanded .card-content {
+            height: auto; opacity: 1; visibility: visible;
+            pointer-events: auto; margin-top: 24px;
+        }
+
+        .card-header { display: flex; justify-content: space-between; align-items: center; }
+        .coin-meta { display: flex; align-items: center; gap: 14px; }
+        .logo-circle { 
+            width: 44px; height: 44px; border-radius: 50%; 
+            background: var(--card-bg); display: flex; align-items: center; 
+            justify-content: center; border: 1px solid var(--border-color); 
+        }
+        
+        .price-group { display: flex; align-items: baseline; gap: 10px; }
+        .price { 
+            font-size: 30px; font-weight: 600; color: var(--text-main); 
+            font-variant-numeric: tabular-nums; letter-spacing: -0.8px;
+        }
+        .pct-change { font-size: 16px; font-weight: 600; }
         .pct-up { color: var(--rh-green); }
         .pct-down { color: var(--rh-red); }
 
-        .chart-container { position: relative; height: 200px; width: 100%; display: flex; flex-direction: column; margin: 20px 0; overflow: visible; }
+        .chart-container { position: relative; height: 200px; width: 100%; display: flex; flex-direction: column; margin: 24px 0; overflow: visible; }
         .chart-main-area { display: flex; flex-grow: 1; position: relative; }
         svg.main-chart { flex-grow: 1; height: 100%; overflow: visible; }
-        .chart-area-fill { fill: url(#areaGradient); opacity: 0.12; }
-        .chart-line { fill: none; stroke: var(--rh-green); stroke-width: 2.2; }
-        .grid-line { stroke: #1c1c1e; stroke-width: 1; }
+        .chart-area-fill { fill: url(#areaGradient); opacity: 0.15; }
         
-        .live-anchor { fill: var(--rh-green); animation: anchor-pulse 1.5s infinite; }
-        @keyframes anchor-pulse { 0% { r: 3; opacity: 1; } 50% { r: 5; opacity: 0.4; } 100% { r: 3; opacity: 1; } }
+        /* Updated chart line to use a variable */
+        .chart-line { fill: none; stroke: var(--chart-color); stroke-width: 2.5; }
+        
+        .grid-line { stroke: var(--grid-line); stroke-width: 1; stroke-dasharray: 2,2; }
+        
+        /* Updated anchor to use chart color variable */
+        .live-anchor { fill: var(--chart-color); animation: anchor-pulse 1.5s infinite; }
+        @keyframes anchor-pulse { 0% { r: 3; opacity: 1; } 50% { r: 6; opacity: 0.6; } 100% { r: 3; opacity: 1; } }
 
-        .y-axis-labels { width: 68px; position: relative; font-size: 11px; font-weight: 500; color: #636366; padding-left: 12px; font-variant-numeric: tabular-nums; }
+        .y-axis-labels { width: 72px; position: relative; font-size: 11px; font-weight: 600; color: var(--text-dim); padding-left: 14px; font-variant-numeric: tabular-nums; }
         .y-label-max { position: absolute; top: 0; right: 0; }
         .y-label-min { position: absolute; bottom: 0; right: 0; }
         
+        /* Updated live tag to use chart color variable */
         .y-label-live { 
-            position: absolute; 
-            right: 0; 
-            background: var(--rh-green); 
-            color: #000000; 
-            padding: 3px 6px; 
-            border-radius: 5px; 
-            font-size: 10px; 
-            font-weight: 600; 
-            letter-spacing: -0.1px;
-            transform: translateY(-50%); 
-            transition: top 0.2s cubic-bezier(0.23, 1, 0.32, 1); 
-            z-index: 5;
+            position: absolute; right: 0; 
+            background: var(--chart-color); color: var(--btn-text); 
+            padding: 4px 8px; font-size: 10px; font-weight: 800; 
+            transform: translateY(-50%); transition: top 0.1s linear; z-index: 5;
+            border-radius: 4px;
         }
 
-        .x-axis-labels { display: flex; justify-content: space-between; padding-top: 12px; font-size: 10px; font-weight: 500; color: #636366; }
+        .x-axis-labels { display: flex; justify-content: space-between; padding-top: 14px; font-size: 10px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; }
 
-        .footer-row { display: flex; justify-content: space-between; align-items: center; padding-top: 18px; border-top: 1px solid #1c1c1e; gap: 10px; }
-        .stats-inline { display: flex; gap: 20px; }
-        .stat-mini { display: flex; flex-direction: column; gap: 2px; }
-        .stat-mini-label { font-size: 10px; font-weight: 500; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.2px; }
-        .stat-mini-val { font-size: 14px; font-weight: 500; color: #fff; }
+        .footer-row { display: flex; justify-content: flex-end; align-items: center; padding-top: 20px; border-top: 1.5px solid var(--border-color); gap: 10px; }
 
-        .tf-nav { display: flex; background: #1c1c1e; padding: 3px; border-radius: 10px; }
-        .tf-btn { background: none; border: none; color: #8e8e93; font-size: 11px; font-weight: 600; cursor: pointer; padding: 6px 12px; border-radius: 8px; transition: 0.2s; }
-        .tf-btn.active { color: #fff; background: #3a3a3c; }
+        .tf-nav { display: flex; background: var(--grid-line); padding: 3px; border: 1px solid var(--border-color); border-radius: 20px; }
+        .tf-btn { background: none; border: none; color: var(--text-dim); font-size: 11px; font-weight: 700; cursor: pointer; padding: 6px 14px; border-radius: 16px; transition: 0.2s; }
+        
+        /* Updated active button to use chart color variable */
+        .tf-btn.active { color: var(--btn-text); background: var(--chart-color); }
 
-        .dominance-footer { position: fixed; bottom: 30px; left: 16px; right: 16px; background: rgba(28, 28, 30, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 16px 20px; border-radius: 20px; border: 0.5px solid rgba(255,255,255,0.1); z-index: 100; max-width: 1168px; margin: 0 auto; }
-        .dom-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
-        .dom-item { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500; color: #fff; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; }
-        .dom-bar-wrapper { height: 5px; background: #2c2c2e; border-radius: 10px; display: flex; overflow: hidden; }
-        .dom-segment { height: 100%; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .add-card { border: 2px dashed var(--border-color); display: flex; align-items: center; justify-content: center; gap: 12px; color: var(--text-dim); min-height: 60px; }
+        .add-card:hover { border-color: var(--rh-green); color: var(--rh-green); }
     </style>
 </head>
 <body>
@@ -120,106 +201,181 @@
             <div id="live-clock">--:--</div>
             <div class="market-status-container">
                 <div class="status-pill market-on"><div class="pulse-dot"></div><span>Crypto</span></div>
-                <div id="stock-status-pill" class="status-pill"><div class="pulse-dot"></div><span>Stock Market</span></div>
+                <div id="stock-status-pill" class="status-pill"><div class="pulse-dot"></div><span>Stocks</span></div>
             </div>
         </div>
-        <div style="font-size: 10px; font-weight: 500; color: #48484a; letter-spacing: 0.5px;">TERMINAL_PRO_2026</div>
+        <button class="theme-toggle" onclick="toggleTheme()">Theme</button>
     </header>
 
-    <!-- BTC CARD -->
-    <div class="card">
-        <div class="card-header">
-            <div class="coin-meta">
-                <div class="logo-circle"><svg width="22" height="22" viewBox="0 0 32 32"><path fill="#F7931A" d="M24.7 15.3c.4-2.7-1.7-4.1-4.5-5.1l.9-3.7-2.3-.6-.9 3.5c-.6-.1-1.2-.3-1.8-.4l.9-3.6-2.3-.6-.9 3.7c-.5-.1-1-.2-1.5-.3l-3.1-.8-.6 2.4s1.7.4 1.6.4c.9.2 1.1.8 1.1 1.3l-1.1 4.3c.1 0 .1.1.2.1l-.2-.1-1.5 6.1c-.1.3-.4.7-1 .6 0 0-1.6-.4-1.6-.4l-1.1 2.6 3 0c.5.1 1.1.3 1.7.4l-.9 3.8 2.3.6.9-3.7c.6.2 1.2.3 1.8.5l-.9 3.7 2.3.6.9-3.8c3.9.7 6.9.4 8.2-3.1.9-2.8-.1-4.4-2.1-5.4 1.5-.4 2.6-1.4 2.9-3.5zm-5.2 7.7c-.7 2.8-5.5 1.3-7.1.9l1.3-5.1c1.6.4 6.5 1.2 5.8 4.2zm.7-7.8c-.6 2.5-4.6 1.3-6 1l1.2-4.7c1.4.3 5.4 1 4.8 3.7z"/></svg></div>
-                <div><div style="font-weight:600; font-size:16px;">Bitcoin</div><div style="color:var(--text-dim); font-size:12px; font-weight:400;">BTC</div></div>
-            </div>
-            <div class="price-group">
-                <div class="price" id="btc-price">$--.---</div>
-                <div class="pct-change" id="btc-pct">--%</div>
-            </div>
-        </div>
-        <div class="chart-container">
-            <div class="chart-main-area">
-                <svg id="btc-chart" class="main-chart"></svg>
-                <div class="y-axis-labels">
-                    <span id="btc-max" class="y-label-max">--</span>
-                    <span id="btc-live-tag" class="y-label-live">--</span>
-                    <span id="btc-min" class="y-label-min">--</span>
+    <div id="card-rolodex">
+        <div class="card" onclick="toggleCard(this)" data-coin="BTC-USD">
+            <button class="remove-btn" onclick="removeCard(event, this)">×</button>
+            <div class="card-header">
+                <div class="coin-meta">
+                    <div class="logo-circle"><svg width="24" height="24" viewBox="0 0 32 32"><path fill="#F7931A" d="M24.7 15.3c.4-2.7-1.7-4.1-4.5-5.1l.9-3.7-2.3-.6-.9 3.5c-.6-.1-1.2-.3-1.8-.4l.9-3.6-2.3-.6-.9 3.7c-.5-.1-1-.2-1.5-.3l-3.1-.8-.6 2.4s1.7.4 1.6.4c.9.2 1.1.8 1.1 1.3l-1.1 4.3c.1 0 .1.1.2.1l-.2-.1-1.5 6.1c-.1.3-.4.7-1 .6 0 0-1.6-.4-1.6-.4l-1.1 2.6 3 0c.5.1 1.1.3 1.7.4l-.9 3.8 2.3.6.9-3.7c.6.2 1.2.3 1.8.5l-.9 3.7 2.3.6.9-3.8c3.9.7 6.9.4 8.2-3.1.9-2.8-.1-4.4-2.1-5.4 1.5-.4 2.6-1.4 2.9-3.5zm-5.2 7.7c-.7 2.8-5.5 1.3-7.1.9l1.3-5.1c1.6.4 6.5 1.2 5.8 4.2zm.7-7.8c-.6 2.5-4.6 1.3-6 1l1.2-4.7c1.4.3 5.4 1 4.8 3.7z"/></svg></div>
+                    <div><div style="font-weight:600; font-size:17px;">Bitcoin</div><div style="color:var(--text-dim); font-size:12px; font-weight:500; letter-spacing: 0.5px;">BTC</div></div>
+                </div>
+                <div class="price-group">
+                    <div class="price" id="btc-price">$--.---</div>
+                    <div class="pct-change" id="btc-pct">--%</div>
                 </div>
             </div>
-            <div class="x-axis-labels"><span id="btc-x-start">--</span><span id="btc-x-mid">--</span><span id="btc-x-end">NOW</span></div>
+            <div class="card-content">
+                <div class="chart-container">
+                    <div class="chart-main-area">
+                        <svg id="btc-chart" class="main-chart"></svg>
+                        <div class="y-axis-labels">
+                            <span id="btc-max" class="y-label-max">--</span>
+                            <span id="btc-live-tag" class="y-label-live">--</span>
+                            <span id="btc-min" class="y-label-min">--</span>
+                        </div>
+                    </div>
+                    <div class="x-axis-labels"><span id="btc-x-start">--</span><span id="btc-x-mid">--</span><span id="btc-x-end">NOW</span></div>
+                </div>
+                <div class="footer-row">
+                    <div class="tf-nav" onclick="event.stopPropagation()">
+                        <button class="tf-btn" onclick="updateTF('BTC-USD', '5m', this)">5M</button>
+                        <button class="tf-btn" onclick="updateTF('BTC-USD', '1h', this)">1H</button>
+                        <button class="tf-btn active" onclick="updateTF('BTC-USD', '1d', this)">1D</button>
+                        <button class="tf-btn" onclick="updateTF('BTC-USD', '3m', this)">3M</button>
+                        <button class="tf-btn" onclick="updateTF('BTC-USD', 'ytd', this)">YTD</button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="footer-row">
-            <div class="stats-inline"><div class="stat-mini"><span class="stat-mini-label">Mkt Cap</span><span id="btc-mcap" class="stat-mini-val">--</span></div></div>
-            <div class="tf-nav">
-                <button class="tf-btn" onclick="updateTF('BTC-USD', '5m', this)">5M</button>
-                <button class="tf-btn" onclick="updateTF('BTC-USD', '1h', this)">1H</button>
-                <button class="tf-btn active" onclick="updateTF('BTC-USD', '1d', this)">1D</button>
-                <button class="tf-btn" onclick="updateTF('BTC-USD', '3m', this)">3M</button>
-                <button class="tf-btn" onclick="updateTF('BTC-USD', 'ytd', this)">YTD</button>
+
+        <div class="card" onclick="toggleCard(this)" data-coin="LTC-USD">
+            <button class="remove-btn" onclick="removeCard(event, this)">×</button>
+            <div class="card-header">
+                <div class="coin-meta">
+                    <div class="logo-circle"><svg width="24" height="24" viewBox="0 0 32 32"><path fill="#A6A9AA" d="M11.5 21.6l1.2-4.6 3.9-1.4.7-2.9-3.9 1.4.9-3.6h3.1l.7-2.9h-3.1l1.1-4.6H13l-4.5 18.6H19l-.7 2.9h-6.8z"/></svg></div>
+                    <div><div style="font-weight:600; font-size:17px;">Litecoin</div><div style="color:var(--text-dim); font-size:12px; font-weight:500; letter-spacing: 0.5px;">LTC</div></div>
+                </div>
+                <div class="price-group">
+                    <div class="price" id="ltc-price">$--.---</div>
+                    <div class="pct-change" id="ltc-pct">--%</div>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="chart-container">
+                    <div class="chart-main-area">
+                        <svg id="ltc-chart" class="main-chart"></svg>
+                        <div class="y-axis-labels">
+                            <span id="ltc-max" class="y-label-max">--</span>
+                            <span id="ltc-live-tag" class="y-label-live">--</span>
+                            <span id="ltc-min" class="y-label-min">--</span>
+                        </div>
+                    </div>
+                    <div class="x-axis-labels"><span id="ltc-x-start">--</span><span id="ltc-x-mid">--</span><span id="ltc-x-end">NOW</span></div>
+                </div>
+                <div class="footer-row">
+                    <div class="tf-nav" onclick="event.stopPropagation()">
+                        <button class="tf-btn" onclick="updateTF('LTC-USD', '5m', this)">5M</button>
+                        <button class="tf-btn" onclick="updateTF('LTC-USD', '1h', this)">1H</button>
+                        <button class="tf-btn active" onclick="updateTF('LTC-USD', '1d', this)">1D</button>
+                        <button class="tf-btn" onclick="updateTF('LTC-USD', '3m', this)">3M</button>
+                        <button class="tf-btn" onclick="updateTF('LTC-USD', 'ytd', this)">YTD</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- LTC CARD -->
-    <div class="card">
-        <div class="card-header">
-            <div class="coin-meta">
-                <div class="logo-circle"><svg width="22" height="22" viewBox="0 0 32 32"><path fill="#A6A9AA" d="M11.5 21.6l1.2-4.6 3.9-1.4.7-2.9-3.9 1.4.9-3.6h3.1l.7-2.9h-3.1l1.1-4.6H13l-4.5 18.6H19l-.7 2.9h-6.8z"/></svg></div>
-                <div><div style="font-weight:600; font-size:16px;">Litecoin</div><div style="color:var(--text-dim); font-size:12px; font-weight:400;">LTC</div></div>
-            </div>
-            <div class="price-group">
-                <div class="price" id="ltc-price">$--.---</div>
-                <div class="pct-change" id="ltc-pct">--%</div>
-            </div>
-        </div>
-        <div class="chart-container">
-            <div class="chart-main-area">
-                <svg id="ltc-chart" class="main-chart"></svg>
-                <div class="y-axis-labels">
-                    <span id="ltc-max" class="y-label-max">--</span>
-                    <span id="ltc-live-tag" class="y-label-live">--</span>
-                    <span id="ltc-min" class="y-label-min">--</span>
-                </div>
-            </div>
-            <div class="x-axis-labels"><span id="ltc-x-start">--</span><span id="ltc-x-mid">--</span><span id="ltc-x-end">NOW</span></div>
-        </div>
-        <div class="footer-row">
-            <div class="stats-inline"><div class="stat-mini"><span class="stat-mini-label">Mkt Cap</span><span id="ltc-mcap" class="stat-mini-val">--</span></div></div>
-            <div class="tf-nav">
-                <button class="tf-btn" onclick="updateTF('LTC-USD', '5m', this)">5M</button>
-                <button class="tf-btn" onclick="updateTF('LTC-USD', '1h', this)">1H</button>
-                <button class="tf-btn active" onclick="updateTF('LTC-USD', '1d', this)">1D</button>
-                <button class="tf-btn" onclick="updateTF('LTC-USD', '3m', this)">3M</button>
-                <button class="tf-btn" onclick="updateTF('LTC-USD', 'ytd', this)">YTD</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="dominance-footer">
-        <div class="dom-header">
-            <div class="dom-item"><div class="dot" style="background:var(--btc-brand)"></div>BTC <span id="btc-dom" style="margin-left:4px; color:#8e8e93">--%</span></div>
-            <div class="dom-item"><div class="dot" style="background:var(--eth-brand)"></div>ETH <span id="eth-dom" style="margin-left:4px; color:#8e8e93">--%</span></div>
-            <div class="dom-item"><div class="dot" style="background:var(--alt-brand)"></div>ALTS <span id="alt-dom" style="margin-left:4px; color:#8e8e93">--%</span></div>
-        </div>
-        <div class="dom-bar-wrapper">
-            <div id="bar-btc" class="dom-segment" style="background: var(--btc-brand);"></div>
-            <div id="bar-eth" class="dom-segment" style="background: var(--eth-brand);"></div>
-            <div id="bar-alt" class="dom-segment" style="background: var(--alt-brand);"></div>
-        </div>
+    <div class="card add-card" onclick="addNewAsset()">
+        <span style="font-size: 24px; font-weight: 300;">+</span>
+        <span style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Add New Asset</span>
     </div>
 
     <script>
     const cache = {};
-    const livePrices = { 'BTC-USD': 0, 'LTC-USD': 0 };
-    const dayOpens = { 'BTC-USD': 0, 'LTC-USD': 0 };
-    const timeStamps = { 'btc-chart': [], 'ltc-chart': [] };
+    const livePrices = {};
+    const dayOpens = {};
+    const timeStamps = {};
+    let activeWS = null;
 
-    function formatStat(n) {
-        if (n >= 1e12) return (n/1e12).toFixed(1)+'T';
-        if (n >= 1e9) return (n/1e9).toFixed(1)+'B';
-        if (n >= 1e6) return (n/1e6).toFixed(0)+'M';
-        return n.toLocaleString();
+    function toggleTheme() {
+        document.body.classList.toggle('light-theme');
+        Object.keys(cache).forEach(k => {
+            const coin = document.getElementById(k).closest('.card').dataset.coin;
+            draw(k, cache[k], livePrices[coin]);
+        });
+    }
+
+    function toggleCard(cardElement) {
+        cardElement.classList.toggle('expanded');
+        const chartId = cardElement.querySelector('svg.main-chart').id;
+        if (cache[chartId]) {
+            const coin = cardElement.dataset.coin;
+            const activeBtn = cardElement.querySelector('.tf-btn.active');
+            draw(chartId, cache[chartId], livePrices[coin], activeBtn.innerText.toLowerCase());
+        }
+    }
+
+    function removeCard(event, btn) {
+        event.stopPropagation();
+        const card = btn.closest('.card');
+        const coin = card.dataset.coin;
+        const chartId = card.querySelector('svg.main-chart').id;
+        
+        delete cache[chartId];
+        delete livePrices[coin];
+        card.remove();
+        initLive(); 
+    }
+
+    async function addNewAsset() {
+        const symbol = prompt("Enter Crypto Symbol (e.g., ETH, SOL, DOGE):");
+        if (!symbol) return;
+        
+        const coin = `${symbol.toUpperCase()}-USD`;
+        const prefix = symbol.toLowerCase();
+        const chartId = `${prefix}-chart`;
+
+        if (document.getElementById(chartId)) {
+            alert("Asset already exists.");
+            return;
+        }
+
+        const template = `
+            <div class="card" onclick="toggleCard(this)" data-coin="${coin}">
+                <button class="remove-btn" onclick="removeCard(event, this)">×</button>
+                <div class="card-header">
+                    <div class="coin-meta">
+                        <div class="logo-circle"><span style="font-weight:800; font-size:10px;">${symbol.substring(0,3)}</span></div>
+                        <div><div style="font-weight:600; font-size:17px;">${symbol.toUpperCase()}</div><div style="color:var(--text-dim); font-size:12px; font-weight:500; letter-spacing: 0.5px;">${symbol.toUpperCase()}</div></div>
+                    </div>
+                    <div class="price-group">
+                        <div class="price" id="${prefix}-price">$--.---</div>
+                        <div class="pct-change" id="${prefix}-pct">--%</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="chart-container">
+                        <div class="chart-main-area">
+                            <svg id="${chartId}" class="main-chart"></svg>
+                            <div class="y-axis-labels">
+                                <span id="${prefix}-max" class="y-label-max">--</span>
+                                <span id="${prefix}-live-tag" class="y-label-live">--</span>
+                                <span id="${prefix}-min" class="y-label-min">--</span>
+                            </div>
+                        </div>
+                        <div class="x-axis-labels"><span id="${prefix}-x-start">--</span><span id="${prefix}-x-mid">--</span><span id="${prefix}-x-end">NOW</span></div>
+                    </div>
+                    <div class="footer-row">
+                        <div class="tf-nav" onclick="event.stopPropagation()">
+                            <button class="tf-btn" onclick="updateTF('${coin}', '5m', this)">5M</button>
+                            <button class="tf-btn" onclick="updateTF('${coin}', '1h', this)">1H</button>
+                            <button class="tf-btn active" onclick="updateTF('${coin}', '1d', this)">1D</button>
+                            <button class="tf-btn" onclick="updateTF('${coin}', '3m', this)">3M</button>
+                            <button class="tf-btn" onclick="updateTF('${coin}', 'ytd', this)">YTD</button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        
+        document.getElementById('card-rolodex').insertAdjacentHTML('beforeend', template);
+        fetchHistory(coin);
+        initLive(); 
     }
 
     function updateStockMarketIndicator() {
@@ -236,9 +392,8 @@
         const prefix = coin.split('-')[0].toLowerCase();
         const elPrice = document.getElementById(`${prefix}-price`);
         const elPct = document.getElementById(`${prefix}-pct`);
-        
+        if(!elPrice) return;
         elPrice.innerText = '$' + price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-
         if (dayOpens[coin]) {
             const diff = price - dayOpens[coin];
             const pct = (diff / dayOpens[coin]) * 100;
@@ -258,28 +413,30 @@
 
     function draw(id, data, currentLivePrice = null, timeframe = '1d') {
         const svg = document.getElementById(id);
+        if(!svg) return;
         const prefix = id.split('-')[0];
         svg.innerHTML = '';
         if (!data || !data.length) return;
-
+        
         const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
         defs.innerHTML = `<linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="var(--rh-green)" stop-opacity="0.8"/><stop offset="100%" stop-color="var(--rh-green)" stop-opacity="0"/></linearGradient>`;
+            <stop offset="0%" stop-color="var(--chart-color)" stop-opacity="0.5"/><stop offset="100%" stop-color="var(--chart-color)" stop-opacity="0"/></linearGradient>`;
         svg.appendChild(defs);
-
+        
         const rect = svg.getBoundingClientRect();
-        const w = rect.width, h = rect.height;
+        const w = rect.width || (svg.closest('.card').clientWidth - 72); 
+        const h = 200; 
+        
         let plotData = [...data];
         if (currentLivePrice) plotData[plotData.length - 1] = { close: currentLivePrice };
-
         const prices = plotData.map(d => d.close);
         const min = Math.min(...prices), max = Math.max(...prices), range = (max - min) || 1;
         
         document.getElementById(prefix + '-max').innerText = Math.round(max).toLocaleString();
         document.getElementById(prefix + '-min').innerText = Math.round(min).toLocaleString();
-
+        
         const getY = (v) => h - ((v - min) / range) * h;
-
+        
         if (timeStamps[id] && timeStamps[id].length > 0) {
             const ts = timeStamps[id];
             document.getElementById(`${prefix}-x-start`).innerText = formatDate(ts[0], timeframe);
@@ -294,51 +451,23 @@
         }
 
         const points = plotData.map((d, i) => `${(i/(plotData.length-1))*w},${getY(d.close)}`);
-        
         const area = document.createElementNS("http://www.w3.org/2000/svg", "path");
         area.setAttribute('d', `M 0,${h} L ${points.join(' L ')} L ${w},${h} Z`);
         area.setAttribute('class', 'chart-area-fill'); svg.appendChild(area);
-
+        
         const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
         line.setAttribute('d', `M ${points.join(' L ')}`);
         line.setAttribute('class', 'chart-line'); svg.appendChild(line);
-
+        
         const lastPrice = plotData[plotData.length-1].close;
         const lastY = getY(lastPrice);
-        
         const tag = document.getElementById(`${prefix}-live-tag`);
         tag.style.top = `${lastY}px`;
         tag.innerText = Math.round(lastPrice).toLocaleString();
-
+        
         const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
         dot.setAttribute('cx', w); dot.setAttribute('cy', lastY);
         dot.setAttribute('class', 'live-anchor'); svg.appendChild(dot);
-    }
-
-    async function fetchDominance() {
-        try {
-            const res = await fetch('https://api.coingecko.com/api/v3/global');
-            const json = await res.json();
-            const { btc, eth } = json.data.market_cap_percentage;
-            const alts = 100 - btc - eth;
-            document.getElementById('btc-dom').innerText = btc.toFixed(1) + '%';
-            document.getElementById('eth-dom').innerText = eth.toFixed(1) + '%';
-            document.getElementById('alt-dom').innerText = alts.toFixed(1) + '%';
-            document.getElementById('bar-btc').style.width = btc + '%';
-            document.getElementById('bar-eth').style.width = eth + '%';
-            document.getElementById('bar-alt').style.width = alts + '%';
-        } catch (e) {}
-    }
-
-    async function fetchStats() {
-        try {
-            const res = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,litecoin');
-            const data = await res.json();
-            data.forEach(coin => {
-                const prefix = coin.symbol === 'btc' ? 'btc' : 'ltc';
-                document.getElementById(`${prefix}-mcap`).innerText = '$' + formatStat(coin.market_cap);
-            });
-        } catch (e) {}
     }
 
     async function fetchHistory(coin, tf = '1d') {
@@ -346,28 +475,24 @@
         let gran = 3600; 
         let startIso = "";
         const now = new Date();
-
         if (tf === '5m') gran = 60;
         if (tf === '1h') gran = 300;
         if (tf === '1d') gran = 3600;
         if (tf === '3m') {
-            gran = 21600; // 6h granularity to fit 90 days into 300-point limit
+            gran = 21600; 
             const threeMonthsAgo = new Date();
             threeMonthsAgo.setMonth(now.getMonth() - 3);
             startIso = threeMonthsAgo.toISOString();
         }
         if (tf === 'ytd') {
-            gran = 86400; // 1 day granularity
+            gran = 86400; 
             startIso = new Date(now.getFullYear(), 0, 1).toISOString();
         }
-
         const url = `https://api.exchange.coinbase.com/products/${coin}/candles?granularity=${gran}` + (startIso ? `&start=${startIso}` : "");
-
         try {
             const res = await fetch(url);
             const raw = await res.json();
             if(!Array.isArray(raw)) return;
-            
             let data = raw.map(d => ({ close: d[4] })).reverse();
             timeStamps[id] = raw.map(d => d[0]).reverse();
             cache[id] = data;
@@ -377,9 +502,12 @@
     }
 
     function initLive() {
-        const ws = new WebSocket('wss://ws-feed.exchange.coinbase.com');
-        ws.onopen = () => ws.send(JSON.stringify({type: "subscribe", channels: [{name: "ticker", product_ids: ["BTC-USD", "LTC-USD"]}]}));
-        ws.onmessage = (e) => {
+        if(activeWS) activeWS.close();
+        const productIds = Array.from(document.querySelectorAll('.card[data-coin]')).map(c => c.dataset.coin);
+        
+        activeWS = new WebSocket('wss://ws-feed.exchange.coinbase.com');
+        activeWS.onopen = () => activeWS.send(JSON.stringify({type: "subscribe", channels: [{name: "ticker", product_ids: productIds}]}));
+        activeWS.onmessage = (e) => {
             const d = JSON.parse(e.data);
             if (d.price) {
                 const price = parseFloat(d.price);
@@ -387,8 +515,11 @@
                 livePrices[coin] = price;
                 updatePriceUI(coin, price);
                 const chartId = `${coin.split('-')[0].toLowerCase()}-chart`;
-                const activeBtn = document.querySelector(`.tf-nav button.active`); 
-                if (cache[chartId]) draw(chartId, cache[chartId], price, activeBtn ? activeBtn.innerText.toLowerCase() : '1d');
+                if (cache[chartId]) {
+                    const card = document.getElementById(chartId).closest('.card');
+                    const activeBtn = card.querySelector(`.tf-nav button.active`); 
+                    draw(chartId, cache[chartId], price, activeBtn ? activeBtn.innerText.toLowerCase() : '1d');
+                }
             }
         };
     }
@@ -401,14 +532,16 @@
 
     setInterval(() => {
         const now = new Date();
-        document.getElementById('live-clock').innerText = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+        const clock = document.getElementById('live-clock');
+        if(clock) clock.innerText = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
         updateStockMarketIndicator();
     }, 1000);
 
-    fetchDominance(); fetchStats(); fetchHistory('BTC-USD'); fetchHistory('LTC-USD'); initLive();
-    setInterval(fetchStats, 60000);
-    setInterval(fetchDominance, 120000);
-    window.onresize = () => Object.keys(cache).forEach(k => draw(k, cache[k], livePrices[k.startsWith('btc') ? 'BTC-USD' : 'LTC-USD']));
+    fetchHistory('BTC-USD'); fetchHistory('LTC-USD'); initLive();
+    window.onresize = () => Object.keys(cache).forEach(k => {
+        const coin = document.getElementById(k).closest('.card').dataset.coin;
+        draw(k, cache[k], livePrices[coin]);
+    });
     </script>
 </body>
 </html>
